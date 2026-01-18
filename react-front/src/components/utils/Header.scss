@@ -1,0 +1,118 @@
+.header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  transition: all 0.3s ease;
+  padding: 1.2rem 0;
+
+  &.scrolled {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    padding: 0.8rem 0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  }
+
+  .header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 800;
+    font-size: 1.4rem;
+    color: #1e293b;
+
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      background: #6366f1;
+      border-radius: 8px;
+    }
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+
+    @media (max-width: 768px) { display: none; } // Simplification mobile
+
+    a {
+      text-decoration: none;
+      color: #64748b;
+      font-weight: 500;
+      transition: color 0.2s;
+      &:hover { color: #6366f1; }
+    }
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+
+    .btn-login {
+      text-decoration: none;
+      color: #1e293b;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .btn-signup {
+      text-decoration: none;
+      background: #1e293b;
+      color: white;
+      padding: 0.6rem 1.2rem;
+      border-radius: 10px;
+      font-weight: 600;
+      transition: transform 0.2s;
+      &:hover { transform: scale(1.05); }
+    }
+  }
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+
+  .user-welcome {
+    font-size: 0.9rem;
+    color: #4b5563;
+    
+    strong {
+      color: #4f46e5;
+    }
+  }
+
+  .btn-logout {
+    background: transparent;
+    border: 1px solid #e5e7eb;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+
+    &:hover {
+      background: #fee2e2;
+      color: #dc2626;
+      border-color: #fca5a5;
+    }
+  }
+}
+
+// Utilisation de Link (react-router-dom) au lieu de <a> pour éviter les rechargements
+.nav-links a, .nav-links Link {
+  text-decoration: none;
+  color: inherit;
+  font-weight: 500;
+}

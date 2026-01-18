@@ -1,0 +1,85 @@
+$primary: #6366f1; // Indigo moderne
+$primary-hover: #4f46e5;
+$bg-app: #f8fafc;
+$text-main: #1e293b;
+$text-muted: #64748b;
+$radius: 16px;
+
+.auth-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: $bg-app;
+  padding: 20px;
+
+  .auth-card {
+    background: white;
+    padding: 2.5rem;
+    border-radius: $radius;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 420px;
+    transition: transform 0.3s ease;
+
+    &:hover { transform: translateY(-4px); }
+  }
+
+  .auth-header {
+    margin-bottom: 2rem;
+    text-align: center;
+
+    h1 { font-size: 1.8rem; color: $text-main; margin-bottom: 0.5rem; }
+    p { color: $text-muted; font-size: 0.95rem; }
+  }
+
+  .auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+
+      label { font-weight: 600; font-size: 0.85rem; color: $text-main; }
+      .label-wrapper { display: flex; justify-content: space-between; }
+      
+      input {
+        padding: 0.8rem 1rem;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 10px;
+        transition: all 0.2s ease;
+        
+        &:focus {
+          outline: none;
+          border-color: $primary;
+          box-shadow: 0 0 0 4px rgba($primary, 0.1);
+        }
+      }
+    }
+  }
+
+  .btn-primary {
+    background: $primary;
+    color: white;
+    padding: 0.8rem;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+
+    &:hover { background: $primary-hover; }
+  }
+
+  .auth-footer {
+    margin-top: 2rem;
+    text-align: center;
+    font-size: 0.9rem;
+    color: $text-muted;
+
+    a { color: $primary; font-weight: 600; text-decoration: none; margin-left: 5px; }
+  }
+}

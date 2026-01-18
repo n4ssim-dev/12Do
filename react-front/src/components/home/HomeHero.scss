@@ -1,0 +1,152 @@
+$primary: #6366f1; // Indigo moderne
+$primary-hover: #4f46e5;
+$bg-app: #f8fafc;
+$text-main: #1e293b;
+$text-muted: #64748b;
+$radius: 16px;
+
+.hero-section {
+  display: flex;
+  flex-direction: column; // Par défaut pour mobile
+  align-items: center;
+  justify-content: center;
+  gap: 3rem; // Espacement entre le contenu et l'image
+  min-height: calc(100vh - 80px); // Par exemple, si tu as une navbar de 80px
+  padding: 4rem 2rem;
+  background-color: $bg-app;
+  text-align: center;
+  overflow: hidden; // S'assurer que les éléments ne débordent pas
+
+  @media (min-width: 992px) { // Desktop et large tablet
+    flex-direction: row;
+    text-align: left;
+    padding: 6rem 4rem;
+    .hero-content {
+      flex: 1;
+      max-width: 600px;
+    }
+    .hero-image-container {
+      flex: 1;
+      display: flex;
+      justify-content: flex-end; // L'image à droite
+    }
+  }
+
+  .hero-content {
+    h1.hero-title {
+      font-size: 3rem;
+      line-height: 1.2;
+      color: $text-main;
+      margin-bottom: 1.5rem;
+      font-weight: 800; // Gras pour l'impact
+
+      @media (min-width: 768px) {
+        font-size: 4rem;
+      }
+    }
+
+    p.hero-description {
+      font-size: 1.25rem;
+      color: $text-muted;
+      margin-bottom: 2.5rem;
+      max-width: 600px; // Pour éviter une ligne trop longue sur desktop
+      margin-left: auto;
+      margin-right: auto;
+
+      @media (min-width: 992px) {
+        margin-left: 0;
+        margin-right: 0;
+      }
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 1.25rem;
+      justify-content: center;
+      margin-bottom: 1rem;
+
+      @media (min-width: 992px) {
+        justify-content: flex-start;
+      }
+
+      .btn-primary-hero {
+        background: $primary;
+        color: white;
+        padding: 1.1rem 2rem;
+        border: none;
+        border-radius: $radius; // Utilise la même variable de radius
+        font-weight: 700;
+        font-size: 1.1rem;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba($primary, 0.3); // Ombre pour faire ressortir
+        
+        &:hover {
+          background: $primary-hover;
+          transform: translateY(-3px);
+          box-shadow: 0 8px 20px rgba($primary, 0.4);
+        }
+      }
+
+      .btn-secondary-hero { // Exemple si tu ajoutes un 2ème CTA
+        background: transparent;
+        color: $primary;
+        padding: 1rem 2rem;
+        border: 2px solid $primary;
+        border-radius: $radius;
+        font-weight: 600;
+        font-size: 1.1rem;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.3s ease;
+
+        &:hover {
+          background: $primary;
+          color: white;
+        }
+      }
+    }
+
+    p.hero-small-text {
+      font-size: 0.85rem;
+      color: $text-muted;
+      opacity: 0.8;
+    }
+  }
+
+  .hero-image-container {
+    // Styling pour le placeholder, à remplacer par une vraie image
+    .hero-placeholder-image {
+      width: 100%;
+      max-width: 550px; // Taille maximale pour l'image
+      height: 350px;
+      background: linear-gradient(135deg, $primary-hover, $primary);
+      border-radius: $radius * 2; // Plus arrondi pour un look moderne
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+      position: relative;
+      // Ajout de quelques éléments de design "opinionated"
+      &::before {
+        content: '';
+        position: absolute;
+        top: -20px;
+        left: -20px;
+        width: 80px;
+        height: 80px;
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: $radius;
+        transform: rotate(45deg);
+      }
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -30px;
+        right: -30px;
+        width: 120px;
+        height: 120px;
+        background-color: rgba(255, 255, 255, 0.05);
+        border-radius: 50%;
+      }
+    }
+  }
+}

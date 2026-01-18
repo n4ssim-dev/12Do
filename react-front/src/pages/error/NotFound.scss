@@ -1,0 +1,99 @@
+$primary: #6366f1;
+$text-main: #1e293b;
+$text-muted: #64748b;
+$bg-app: #f8fafc;
+$radius: 12px;
+
+.error-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: $bg-app;
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+
+  .error-content {
+    text-align: center;
+    z-index: 2;
+    max-width: 500px;
+
+    .error-code {
+      font-size: 8rem;
+      font-weight: 900;
+      line-height: 1;
+      color: rgba($primary, 0.1);
+      margin-bottom: -2rem; // Effet de superposition avec le titre
+    }
+
+    .error-title {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: $text-main;
+      margin-bottom: 1rem;
+    }
+
+    .error-message {
+      font-size: 1.1rem;
+      color: $text-muted;
+      line-height: 1.6;
+      margin-bottom: 2.5rem;
+    }
+
+    .error-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+
+      button {
+        padding: 0.8rem 1.5rem;
+        border-radius: $radius;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: none;
+      }
+
+      .btn-home {
+        background: $primary;
+        color: white;
+        box-shadow: 0 4px 14px rgba($primary, 0.3);
+        
+        &:hover {
+          background: darken($primary, 5%);
+          transform: translateY(-2px);
+        }
+      }
+
+      .btn-back {
+        background: white;
+        color: $text-main;
+        border: 1px solid #e2e8f0;
+
+        &:hover {
+          background: #f1f5f9;
+        }
+      }
+    }
+  }
+
+  .error-decoration {
+    position: absolute;
+    z-index: 1;
+    
+    .blob {
+      width: 400px;
+      height: 400px;
+      background: linear-gradient(135deg, rgba($primary, 0.05) 0%, rgba(#a855f7, 0.05) 100%);
+      border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+      animation: morph 8s ease-in-out infinite;
+    }
+  }
+}
+
+@keyframes morph {
+  0% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; }
+  50% { border-radius: 70% 30% 50% 50% / 30% 30% 70% 70%; }
+  100% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; }
+}
