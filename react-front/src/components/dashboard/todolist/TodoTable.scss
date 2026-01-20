@@ -732,3 +732,22 @@ body {
     }
   }
 }
+
+.todo-filters {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+
+    .btn-filter {
+        padding: 8px 12px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        background: #f1f1f1;
+
+        &.active {
+            background: #4f46e5;
+            color: white;
+        }
+    }
+}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import '../_auth-shared.scss';
 import { useAuth } from '../../../AuthContext';
+import ErrorModal from "../../utils/errors/ErrorModal"
 
 const Login = () => {
   const { login } = useAuth();
@@ -71,6 +72,11 @@ const Login = () => {
           <button className="btn-primary">Se connecter</button>
         </form>
       </div>
+      <ErrorModal
+          isOpen={!!error}
+          message={error}
+          onClose={() => setError(null)}
+        />
     </div>
   );
 };

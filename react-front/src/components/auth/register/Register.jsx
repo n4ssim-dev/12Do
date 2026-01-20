@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import '../_auth-shared.scss';
+import ErrorModal from '../../utils/errors/ErrorModal';
 
 const Register = () => {
   const [form, setForm] = useState({
@@ -122,7 +123,12 @@ const Register = () => {
             />
           </div>
 
-          {error && <p className="error">{error}</p>}
+          <ErrorModal
+            isOpen={!!error}
+            message={error}
+            onClose={() => setError(null)}
+          />
+
           {success && <p className="success">Compte créé avec succès ✅</p>}
 
           <button type="submit" className="btn-primary">

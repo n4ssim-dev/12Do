@@ -2,6 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../../AuthContext'; 
 import './TodoTable.scss';
 import AddTodo from '../modals/AddTodo';
+import EditTodoModal from './EditTodoModal';
+import DeleteTodoModal from './DeleteTodoModal';
 
 const TodoTable = () => {
     const { user, loading: authLoading } = useAuth(); 
@@ -9,6 +11,12 @@ const TodoTable = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedTodo, setSelectedTodo] = useState(null);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [priorityOrder, setPriorityOrder] = useState(null); // 'asc' | 'desc' | null
+    const [hideCompleted, setHideCompleted] = useState(false);
+
 
     /**
      * 1. Fonction de chargement des données (stable via useCallback)
@@ -57,6 +65,108 @@ const TodoTable = () => {
     const handleAddTodoSuccess = () => {
         fetchTodos(); // Re-fetch au lieu de juste mettre à jour l'état local
     };
+
+    const toggleTodoStatus = async (todo) => {
+        try {
+            const response = await fetch(`http://localhost:8000/todos/todo/${todo.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${user.token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    ...todo,
+                    complete: !todo.complete,
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Erreur lors de la mise à jour du statut');
+            }
+
+            fetchTodos(); // sync avec le backend
+        } catch (err) {
+            setError(err.message);
+        }
+    };
+
+    const deleteTodo = async (todoId) => {
+        try {
+            const response = await fetch(
+                `http://localhost:8000/todos/todo/${todoId}`,
+                {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${user.token}`,
+                    },
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error('Erreur lors de la suppression');
+            }
+
+            fetchTodos();
+            setIsDeleteModalOpen(false);
+            setSelectedTodo(null);
+        } catch (err) {
+            setError(err.message);
+        }
+    };
+
+
+    const editTodo = async (updatedTodo) => {
+        try {
+            const response = await fetch(
+                `http://localhost:8000/todos/todo/${updatedTodo.id}`,
+                {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${user.token}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(updatedTodo),
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error('Erreur lors de la modification');
+            }
+
+            fetchTodos();
+            setIsEditModalOpen(false);
+            setSelectedTodo(null);
+        } catch (err) {
+            setError(err.message);
+        }
+    };
+
+    const getPriorityValue = (priority) => {
+        const p = String(priority || '').toLowerCase();
+
+        if (p === '3' || p === '4' || p === '5' || p.includes('haut')) return 3;
+        if (p === '2' || p.includes('moyen')) return 2;
+        return 1; // faible par défaut
+    };
+
+    const displayedTodos = [...todos]
+    // 1. Filtre état
+    .filter(todo => {
+        if (!todo) return false;
+        if (hideCompleted) return !todo.complete;
+        return true;
+    })
+    // 2. Tri priorité
+    .sort((a, b) => {
+        if (!priorityOrder) return 0;
+
+        const pa = getPriorityValue(a.priority);
+        const pb = getPriorityValue(b.priority);
+
+        return priorityOrder === 'asc' ? pa - pb : pb - pa;
+    });
+
+
 
     if (authLoading || loading) {
         return (
@@ -136,6 +246,33 @@ const TodoTable = () => {
                 )}
 
                 {/* Table Section */}
+                <div className="todo-filters">
+                    <button
+                        className={`btn-filter ${priorityOrder === 'asc' ? 'active' : ''}`}
+                        onClick={() =>
+                            setPriorityOrder(priorityOrder === 'asc' ? null : 'asc')
+                        }
+                    >
+                        🔼 Priorité croissante
+                    </button>
+
+                    <button
+                        className={`btn-filter ${priorityOrder === 'desc' ? 'active' : ''}`}
+                        onClick={() =>
+                            setPriorityOrder(priorityOrder === 'desc' ? null : 'desc')
+                        }
+                    >
+                        🔽 Priorité décroissante
+                    </button>
+
+                    <button
+                        className={`btn-filter ${hideCompleted ? 'active' : ''}`}
+                        onClick={() => setHideCompleted(!hideCompleted)}
+                    >
+                        {hideCompleted ? '👁️ Afficher complétées' : '🚫 Masquer complétées'}
+                    </button>
+                </div>
+
                 <div className="todo-table-wrapper">
                     <table className="todo-table">
                         <thead>
@@ -147,8 +284,9 @@ const TodoTable = () => {
                             </tr>
                         </thead>
                         <tbody>
-                          {todos && todos.length > 0 ? (
-                            todos.map((todo, index) => {
+                            {displayedTodos && displayedTodos.length > 0 ? (
+                                displayedTodos.map((todo, index) => {
+
                               if (!todo) return null; // Sécurité supplémentaire
 
                               const rawPriority = String(todo.priority || '').toLowerCase();
@@ -162,7 +300,11 @@ const TodoTable = () => {
                               return (
                                 <tr key={todo.id || `todo-${index}`}>
                                   <td data-label="État" style={{ width: '80px' }}>
-                                    <button className={`todo-status-btn ${todo.complete ? 'completed' : 'pending'}`}>
+                                    <button
+                                        className={`todo-status-btn ${todo.complete ? 'completed' : 'pending'}`}
+                                        onClick={() => toggleTodoStatus(todo)}
+                                        title="Changer le statut"
+                                    >
                                       {todo.complete ? '✔' : '○'}
                                     </button>
                                   </td>
@@ -183,8 +325,28 @@ const TodoTable = () => {
                                   </td>
 
                                   <td data-label="Actions" className="todo-actions">
-                                    <button className="btn-edit" title="Modifier">✎</button>
-                                    <button className="btn-delete" title="Supprimer">🗑</button>
+                                    <button
+                                        className="btn-edit"
+                                        title="Modifier"
+                                        onClick={() => {
+                                            setSelectedTodo(todo);
+                                            setIsEditModalOpen(true);
+                                        }}
+                                    >
+                                        ✎
+                                    </button>
+
+                                    <button
+                                        className="btn-delete"
+                                        title="Supprimer"
+                                        onClick={() => {
+                                            setSelectedTodo(todo);
+                                            setIsDeleteModalOpen(true);
+                                        }}
+                                    >
+                                        🗑
+                                    </button>
+
                                   </td>
                                 </tr>
                               );
@@ -210,6 +372,26 @@ const TodoTable = () => {
                 onSubmit={handleAddTodoSuccess} 
                 userToken={user?.token}
             />
+            <EditTodoModal
+                isOpen={isEditModalOpen}
+                todo={selectedTodo}
+                onClose={() => {
+                    setIsEditModalOpen(false);
+                    setSelectedTodo(null);
+                }}
+                onSubmit={editTodo}
+            />
+
+            <DeleteTodoModal
+                isOpen={isDeleteModalOpen}
+                todo={selectedTodo}
+                onClose={() => {
+                    setIsDeleteModalOpen(false);
+                    setSelectedTodo(null);
+                }}
+                onConfirm={deleteTodo}
+            />
+
         </div>
     );
 };
