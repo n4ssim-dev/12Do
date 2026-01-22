@@ -4,6 +4,7 @@
 ### Python ###
 
 alembic.ini
+alembic/
 testdb.db
 todosdb.db
 alembic.ini

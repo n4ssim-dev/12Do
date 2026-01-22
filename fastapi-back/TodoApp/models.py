@@ -1,5 +1,6 @@
 from .database import Base
-from sqlalchemy import Column,Integer, String, Boolean, ForeignKey
+from sqlalchemy import Column,Integer, String, Boolean, ForeignKey, DateTime
+from datetime import datetime
 
 class Users(Base):
     __tablename__ = 'users'
@@ -16,7 +17,7 @@ class Users(Base):
 
 
 class Todos(Base):
-    __tablename__= 'todos'
+    __tablename__ = 'todos'
 
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String)
@@ -24,3 +25,5 @@ class Todos(Base):
     priority = Column(Integer)
     complete = Column(Boolean, default=False)
     owner_id = Column(Integer, ForeignKey("users.id"))
+    created_at = Column(DateTime, default=datetime.utcnow)
+    theme = Column(String)
