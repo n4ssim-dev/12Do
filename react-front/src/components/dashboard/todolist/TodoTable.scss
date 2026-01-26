@@ -733,21 +733,113 @@ body {
   }
 }
 
-.todo-filters {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 15px;
+.filter-bar-container {
+  @include card;
+  padding: map-get($spacing, '4') map-get($spacing, '6');
+  margin-bottom: map-get($spacing, '6');
+  display: flex;
+  flex-wrap: wrap;
+  gap: map-get($spacing, '4');
+  align-items: center;
+  justify-content: space-between;
 
-    .btn-filter {
-        padding: 8px 12px;
-        border-radius: 8px;
-        border: none;
-        cursor: pointer;
-        background: #f1f1f1;
+  .search-box {
+    position: relative;
+    flex: 1;
+    min-width: 250px;
 
-        &.active {
-            background: #4f46e5;
-            color: white;
-        }
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 14px;
+      opacity: 0.5;
     }
+
+    input {
+      width: 100%;
+      padding: 10px 10px 10px 35px;
+      border: 1px solid map-get($colors, 'slate-200');
+      border-radius: map-get($border-radius, 'lg');
+      font-size: map-get($font-sizes, 'sm');
+      transition: all 0.2s;
+
+      &:focus {
+        outline: none;
+        border-color: map-get($colors, 'primary');
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+      }
+    }
+  }
+
+  .filters-group {
+    display: flex;
+    gap: map-get($spacing, '3');
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .filter-select {
+    padding: 8px 12px;
+    border-radius: map-get($border-radius, 'lg');
+    border: 1px solid map-get($colors, 'slate-200');
+    background-color: map-get($colors, 'white');
+    font-size: map-get($font-sizes, 'sm');
+    cursor: pointer;
+    color: map-get($colors, 'slate-700');
+
+    &:focus {
+      outline: none;
+      border-color: map-get($colors, 'primary');
+    }
+  }
+
+  .btn-action {
+    @include button-secondary;
+    padding: 8px 14px;
+    font-size: map-get($font-sizes, 'sm');
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+
+    &.active {
+      background-color: map-get($colors, 'primary');
+      color: white;
+      border-color: map-get($colors, 'primary');
+    }
+
+    &.active-warning {
+      background-color: map-get($colors, 'warning');
+      color: white;
+      border-color: map-get($colors, 'warning');
+    }
+  }
+
+  .button-group {
+    display: flex;
+    gap: map-get($spacing, '2');
+  }
+}
+
+// Adaptation Responsive
+@media (max-width: 768px) {
+  .filter-bar-container {
+    flex-direction: column;
+    align-items: stretch;
+
+    .filters-group {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .button-group {
+      justify-content: space-between;
+      
+      button {
+        flex: 1;
+      }
+    }
+  }
 }

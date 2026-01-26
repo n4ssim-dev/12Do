@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { parseFastApiErrors } from '../../utils/fastApiErrors';
-import '../modals/Modal.scss';
+
+import './Modal.scss';
 
 const TODO_THEMES = [
     'Travail',
@@ -12,19 +13,30 @@ const TODO_THEMES = [
     'Urgent',
 ];
 
-const AddTodo = ({ isOpen, onClose, onSubmit, userToken }) => {
+const EditTodoModal = ({ isOpen, onClose, onSubmit, todo }) => {
     const [formData, setFormData] = useState({
         title: '',
         description: '',
         theme: TODO_THEMES[0],
-        priority: '3',
     });
 
-    const [isSubmitting, setIsSubmitting] = useState(false);
     const [errors, setErrors] = useState({});
     const [apiError, setApiError] = useState(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
-    if (!isOpen) return null;
+    useEffect(() => {
+        if (todo) {
+            setFormData({
+                title: todo.title || '',
+                description: todo.description || '',
+                theme: todo.theme || TODO_THEMES[0],
+            });
+            setErrors({});
+            setApiError(null);
+        }
+    }, [todo]);
+
+    if (!isOpen || !todo) return null;
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -61,40 +73,18 @@ const AddTodo = ({ isOpen, onClose, onSubmit, userToken }) => {
         setApiError(null);
 
         try {
-            const response = await fetch('http://localhost:8000/todos/todo', {
-                method: 'POST',
-                headers: {
-                    Authorization: `Bearer ${userToken}`,
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    ...formData,
-                    priority: Number(formData.priority),
-                    complete: false,
-                }),
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                if (response.status === 422) {
-                    setErrors(parseFastApiErrors(data.detail));
-                } else {
-                    setApiError(data.detail || 'Erreur serveur');
-                }
-                return;
-            }
-
-            onSubmit(data);
-            setFormData({
-                title: '',
-                description: '',
-                theme: TODO_THEMES[0],
-                priority: '3',
+            await onSubmit({
+                ...todo,
+                ...formData,
             });
             onClose();
-        } catch {
-            setApiError('Impossible de contacter le serveur');
+        } catch (err) {
+            // onSubmit doit throw en cas d'erreur API
+            if (err?.detail) {
+                setErrors(parseFastApiErrors(err.detail));
+            } else {
+                setApiError('Erreur lors de la mise à jour');
+            }
         } finally {
             setIsSubmitting(false);
         }
@@ -102,20 +92,23 @@ const AddTodo = ({ isOpen, onClose, onSubmit, userToken }) => {
 
     return (
         <div className="modal-overlay">
-            <div className="modal-content">
-                <h2>Nouvelle tâche</h2>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                <h2>Modifier la tâche</h2>
 
                 {apiError && <div className="error-banner">{apiError}</div>}
 
-                <form onSubmit={handleSubmit} className="todo-form">
+                <form onSubmit={handleSubmit}>
                     <div className="form-group">
                         <label>Titre</label>
                         <input
+                            type="text"
                             name="title"
                             value={formData.title}
                             onChange={handleChange}
                         />
-                        {errors.title && <span className="error error-msg">{errors.title}</span>}
+                        {errors.title && (
+                            <span className="error error-msg">{errors.title}</span>
+                        )}
                     </div>
 
                     <div className="form-group">
@@ -132,38 +125,37 @@ const AddTodo = ({ isOpen, onClose, onSubmit, userToken }) => {
 
                     <div className="form-group">
                         <label>Thème</label>
-                        <select name="theme" value={formData.theme} onChange={handleChange}>
-                            {TODO_THEMES.map(t => (
-                                <option key={t} value={t}>{t}</option>
-                            ))}
-                        </select>
-                        {errors.theme && <span className="error error-msg">{errors.theme}</span>}
-                    </div>
-
-                    <div className="form-group">
-                        <label>Priorité</label>
                         <select
-                            name="priority"
-                            value={formData.priority}
+                            name="theme"
+                            value={formData.theme}
                             onChange={handleChange}
                         >
-                            <option value="1">1 - Très bas</option>
-                            <option value="2">2 - Bas</option>
-                            <option value="3">3 - Moyen</option>
-                            <option value="4">4 - Haut</option>
-                            <option value="5">5 - Urgent</option>
+                            {TODO_THEMES.map(t => (
+                                <option key={t} value={t}>
+                                    {t}
+                                </option>
+                            ))}
                         </select>
-                        {errors.priority && (
-                            <span className="error error-msg">{errors.priority}</span>
+                        {errors.theme && (
+                            <span className="error error-msg">{errors.theme}</span>
                         )}
                     </div>
 
                     <div className="modal-actions">
-                        <button type="button" onClick={onClose}>
+                        <button
+                            type="button"
+                            className="btn-secondary"
+                            onClick={onClose}
+                            disabled={isSubmitting}
+                        >
                             Annuler
                         </button>
-                        <button type="submit" disabled={isSubmitting}>
-                            {isSubmitting ? 'Création...' : 'Ajouter'}
+                        <button
+                            type="submit"
+                            className="btn-primary"
+                            disabled={isSubmitting}
+                        >
+                            {isSubmitting ? 'Enregistrement...' : 'Enregistrer'}
                         </button>
                     </div>
                 </form>
@@ -172,4 +164,4 @@ const AddTodo = ({ isOpen, onClose, onSubmit, userToken }) => {
     );
 };
 
-export default AddTodo;
+export default EditTodoModal;

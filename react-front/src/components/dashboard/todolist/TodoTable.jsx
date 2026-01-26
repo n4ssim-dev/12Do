@@ -2,8 +2,10 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../../AuthContext'; 
 import './TodoTable.scss';
 import AddTodo from '../modals/AddTodo';
-import EditTodoModal from './EditTodoModal';
-import DeleteTodoModal from './DeleteTodoModal';
+import EditTodoModal from '../modals/EditTodoModal';
+import DeleteTodoModal from '../modals/DeleteTodoModal';
+
+const TODO_THEMES = ['Travail', 'Personnel', 'Santé', 'Études', 'Maison', 'Finances', 'Urgent'];
 
 const TodoTable = () => {
     const { user, loading: authLoading } = useAuth(); 
@@ -16,6 +18,9 @@ const TodoTable = () => {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [priorityOrder, setPriorityOrder] = useState(null); // 'asc' | 'desc' | null
     const [hideCompleted, setHideCompleted] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [themeFilter, setThemeFilter] = useState('Tous');
+    const [dateOrder, setDateOrder] = useState(null); // 'asc' | 'desc' | null
 
 
     /**
@@ -149,21 +154,45 @@ const TodoTable = () => {
         return 1; // faible par défaut
     };
 
+    // Logique de filtrage et tri mise à jour
     const displayedTodos = [...todos]
-    // 1. Filtre état
-    .filter(todo => {
-        if (!todo) return false;
-        if (hideCompleted) return !todo.complete;
-        return true;
-    })
-    // 2. Tri priorité
-    .sort((a, b) => {
-        if (!priorityOrder) return 0;
+        .filter(todo => {
+            if (!todo) return false;
+            // Filtre Complété
+            if (hideCompleted && todo.complete) return false;
+            // Filtre Thème
+            if (themeFilter !== 'Tous' && todo.theme !== themeFilter) return false;
+            // Recherche textuelle
+            const searchLower = searchTerm.toLowerCase();
+            const matchesSearch = 
+                todo.title?.toLowerCase().includes(searchLower) || 
+                todo.description?.toLowerCase().includes(searchLower);
+            
+            return matchesSearch;
+        })
 
+    .sort((a, b) => {
+        // 1. Calcul des valeurs de priorité
         const pa = getPriorityValue(a.priority);
         const pb = getPriorityValue(b.priority);
+        
+        // 2. Calcul des dates
+        const dateA = new Date(a.created_at || 0);
+        const dateB = new Date(b.created_at || 0);
 
-        return priorityOrder === 'asc' ? pa - pb : pb - pa;
+        // Priorité de tri : si l'utilisateur a cliqué sur Priorité, on traite ça d'abord
+        if (priorityOrder) {
+            const priorityComparison = priorityOrder === 'asc' ? pa - pb : pb - pa;
+            // Si les priorités sont différentes, on retourne le résultat
+            if (priorityComparison !== 0) return priorityComparison;
+        }
+
+        // Si les priorités sont égales (ou si priorityOrder est null), on trie par date
+        if (dateOrder) {
+            return dateOrder === 'asc' ? dateA - dateB : dateB - dateA;
+        }
+
+        return 0;
     });
 
 
@@ -245,44 +274,79 @@ const TodoTable = () => {
                     </div>
                 )}
 
-                {/* Table Section */}
-                <div className="todo-filters">
-                    <button
-                        className={`btn-filter ${priorityOrder === 'asc' ? 'active' : ''}`}
-                        onClick={() =>
-                            setPriorityOrder(priorityOrder === 'asc' ? null : 'asc')
-                        }
-                    >
-                        🔼 Priorité croissante
-                    </button>
+                {/* NOUVELLE BARRE DE FILTRES */}
+                <div className="filter-bar-container">
+                    <div className="search-box">
+                        <span className="search-icon">🔍</span>
+                        <input 
+                            type="text" 
+                            placeholder="Rechercher une tâche..." 
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                    </div>
 
-                    <button
-                        className={`btn-filter ${priorityOrder === 'desc' ? 'active' : ''}`}
-                        onClick={() =>
-                            setPriorityOrder(priorityOrder === 'desc' ? null : 'desc')
-                        }
-                    >
-                        🔽 Priorité décroissante
-                    </button>
+                    <div className="filters-group">
+                        <div className="select-wrapper">
+                            <select 
+                                value={themeFilter} 
+                                onChange={(e) => setThemeFilter(e.target.value)}
+                                className="filter-select"
+                            >
+                                <option value="Tous">Tous les thèmes</option>
+                                {TODO_THEMES.map(t => <option key={t} value={t}>{t}</option>)}
+                            </select>
+                        </div>
 
-                    <button
-                        className={`btn-filter ${hideCompleted ? 'active' : ''}`}
-                        onClick={() => setHideCompleted(!hideCompleted)}
-                    >
-                        {hideCompleted ? '👁️ Afficher complétées' : '🚫 Masquer complétées'}
-                    </button>
+                        <div className="button-group">
+
+                            <button
+                                className={`btn-action ${priorityOrder ? 'active' : ''}`}
+                                onClick={() => {
+                                    // On change juste la priorité sans toucher à la date
+                                    setPriorityOrder(priorityOrder === 'desc' ? 'asc' : priorityOrder === 'asc' ? null : 'desc');
+                                }}
+                                title="Trier par priorité"
+                            >
+                                ⚡ {priorityOrder === 'asc' ? 'Prio ↑' : priorityOrder === 'desc' ? 'Prio ↓' : 'Priorité'}
+                            </button>
+
+                            <button
+                                className={`btn-action ${dateOrder ? 'active' : ''}`}
+                                onClick={() => {
+                                    // On change juste la date sans toucher à la priorité
+                                    setDateOrder(dateOrder === 'desc' ? 'asc' : dateOrder === 'asc' ? null : 'desc');
+                                }}
+                                title="Trier par date"
+                            >
+                                📅 {dateOrder === 'asc' ? 'Date ↑' : dateOrder === 'desc' ? 'Date ↓' : 'Date'}
+                            </button>
+
+                            <button
+                                className={`btn-action ${hideCompleted ? 'active-warning' : ''}`}
+                                onClick={() => setHideCompleted(!hideCompleted)}
+                            >
+                                {hideCompleted ? '👁️ Voir tout' : '🚫 Masquer finis'}
+                            </button>
+                        </div>
+                    </div>
                 </div>
+
+                {/* Table Section */}
 
                 <div className="todo-table-wrapper">
                     <table className="todo-table">
                         <thead>
-                            <tr>
-                                <th>État</th>
-                                <th>Tâche</th>
-                                <th>Priorité</th>
-                                <th style={{ textAlign: 'right' }}>Actions</th>
-                            </tr>
+                        <tr>
+                            <th>État</th>
+                            <th>Tâche</th>
+                            <th>Priorité</th>
+                            <th>Thème</th>
+                            <th>Créée le</th>
+                            <th style={{ textAlign: 'right' }}>Actions</th>
+                        </tr>
                         </thead>
+
                         <tbody>
                             {displayedTodos && displayedTodos.length > 0 ? (
                                 displayedTodos.map((todo, index) => {
@@ -324,6 +388,23 @@ const TodoTable = () => {
                                     </span>
                                   </td>
 
+                                    <td data-label="Thème">
+                                    <span className="todo-theme">
+                                        {todo.theme || '—'}
+                                    </span>
+                                    </td>
+
+                                    <td data-label="Créée le">
+                                    {todo.created_at
+                                        ? new Date(todo.created_at).toLocaleDateString('fr-FR', {
+                                            day: '2-digit',
+                                            month: '2-digit',
+                                            year: 'numeric',
+                                        })
+                                        : '—'}
+                                    </td>
+
+
                                   <td data-label="Actions" className="todo-actions">
                                     <button
                                         className="btn-edit"
@@ -353,7 +434,7 @@ const TodoTable = () => {
                             })
                           ) : (
                             <tr>
-                              <td colSpan="4">
+                              <td colSpan="6">
                                 <div className="todo-empty-state">
                                   <p className="empty-title">Aucune tâche trouvée</p>
                                 </div>

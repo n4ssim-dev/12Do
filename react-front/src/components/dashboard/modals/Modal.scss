@@ -1,0 +1,167 @@
+// Variables de thèmes (pour faciliter les changements futurs)
+$primary-blue: #3b82f6;
+$primary-hover: #2563eb;
+$danger-red: #ef4444;
+$text-main: #1f2937;
+$text-muted: #4b5563;
+$border-color: #d1d5db;
+$radius: 12px;
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    animation: fadeIn 0.3s ease;
+
+    .modal-content {
+        background: white;
+        width: 95%;
+        max-width: 500px;
+        border-radius: $radius;
+        padding: 24px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+        animation: slideUp 0.3s ease-out;
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+
+            h2 {
+                margin: 0;
+                color: $text-main;
+                font-size: 1.4rem;
+                font-weight: 600;
+            }
+
+            .close-btn {
+                background: none;
+                border: none;
+                font-size: 24px;
+                cursor: pointer;
+                color: #9ca3af;
+                transition: color 0.2s;
+                &:hover { color: $text-main; }
+            }
+        }
+
+        p {
+            margin-bottom: 24px;
+            font-size: 0.95rem;
+            color: $text-muted;
+        }
+
+        // Structure commune des formulaires dans les modales
+        form, .todo-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+
+            .form-group {
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+
+                label {
+                    font-size: 0.85rem;
+                    font-weight: 600;
+                    color: $text-main;
+                }
+
+                input, textarea, select {
+                    padding: 10px 12px;
+                    border: 1px solid $border-color;
+                    border-radius: 8px;
+                    font-family: inherit;
+                    font-size: 0.95rem;
+                    transition: all 0.2s ease;
+
+                    &:focus {
+                        outline: none;
+                        border-color: $primary-blue;
+                        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+                    }
+                }
+
+                textarea {
+                    resize: vertical;
+                    min-height: 90px;
+                }
+            }
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 24px;
+
+            // Base des boutons
+            button, .btn {
+                padding: 10px 18px;
+                border-radius: 8px;
+                font-size: 0.9rem;
+                font-weight: 500;
+                cursor: pointer;
+                border: none;
+                transition: all 0.2s ease;
+
+                &:active { transform: scale(0.97); }
+                &:disabled { opacity: 0.5; cursor: not-allowed; }
+            }
+
+            .btn-primary, .btn-submit {
+                background: $primary-blue;
+                color: white;
+                &:hover:not(:disabled) { background: $primary-hover; }
+            }
+
+            .btn-secondary, .btn-cancel {
+                background: #f3f4f6;
+                color: $text-muted;
+                border: 1px solid $border-color;
+                &:hover { background: #e5e7eb; }
+            }
+
+            .btn-danger {
+                background: $danger-red;
+                color: white;
+                &:hover { background: #dc2626; }
+            }
+        }
+    }
+}
+
+.error-msg {
+    color: $danger-red;
+    font-size: 0.85rem;
+    margin-top: -10px; // Aligné sous l'input
+}
+
+// Animations unifiées
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+// Responsive
+@media (max-width: 480px) {
+    .modal-overlay .modal-content {
+        width: 90%;
+        padding: 20px;
+        margin: 0 16px;
+    }
+}

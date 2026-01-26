@@ -1,0 +1,84 @@
+@import '../agenda/AgendaDashboard.scss';
+// Couleurs
+$primary: #4f46e5;
+$primary-light: #eef2ff;
+$danger: #ef4444;
+$gray-100: #f9fafb;
+$gray-200: #e5e7eb; // <--- La variable qui manquait
+$gray-400: #9ca3af;
+$gray-600: #4b5563;
+$gray-800: #1f2937;
+$white: #ffffff;
+
+$shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+$radius: 14px;
+
+.agenda-modal {
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+
+        label {
+            font-size: 0.85rem;
+            color: $gray-600;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+
+            input,
+            select,
+            textarea {
+                padding: 0.45rem 0.6rem;
+                border-radius: 8px;
+                border: 1px solid $gray-200;
+                font-size: 0.85rem;
+
+                &:focus {
+                    outline: none;
+                    border-color: $primary;
+                }
+            }
+
+            textarea {
+                resize: vertical;
+                min-height: 70px;
+            }
+
+            &.checkbox {
+                flex-direction: row;
+                align-items: center;
+                gap: 0.5rem;
+            }
+        }
+    }
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+
+    button {
+        padding: 0.45rem 1.1rem;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        font-size: 0.85rem;
+    }
+
+    .btn-danger {
+        background: $danger;
+        color: white;
+    }
+}
+
+.modal-error {
+    background: rgba(239, 68, 68, 0.1);
+    color: $danger;
+    padding: 0.5rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+}

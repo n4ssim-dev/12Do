@@ -11,6 +11,7 @@ import Login from "./pages/auth/LoginPage.jsx";
 import Register from "./pages/auth/RegisterPage.jsx";
 import Error from "./pages/error/NotFound.jsx"
 import Dashboard from "./pages/dashboard/Dashboard.jsx"
+import AgendaPage from "./pages/agenda/Agenda.jsx";
 
 import ProtectedRoute from "./ProtectedRoute.jsx"
 import { AuthProvider } from "./AuthContext.jsx";
@@ -40,6 +41,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/agenda"
+          element={
+            <ProtectedRoute>
+              <AgendaPage />
             </ProtectedRoute>
           }
         />

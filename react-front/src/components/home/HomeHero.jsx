@@ -6,16 +6,15 @@ const Hero = () => {
     <section className="hero-section">
       <div className="hero-content">
         <h1 className="hero-title">
-          Débloquez votre potentiel. <br/> Commencez dès aujourd'hui.
+          Créér, Organiser, Trier <br />
         </h1>
         <p className="hero-description">
-          Rejoignez des milliers d'utilisateurs et transformez la façon dont vous travaillez. Simplicité, puissance et innovation à portée de main.
+          12Do vous offre une solution de gestion de tâches dans le temps à l'aide d'un tableau de bord et d'un agenda intelligent.
         </p>
         <div className="hero-cta">
           <a href="/register" className="btn-primary-hero">
             Créer un compte gratuit
           </a>
-          {/* Optionnel: un deuxième CTA pour "En savoir plus" ou une démo */}
           <a href="#features" className="btn-secondary-hero">
             En savoir plus
           </a>
@@ -25,8 +24,11 @@ const Hero = () => {
         </p>
       </div>
       <div className="hero-image-container">
-        {/* Ici, tu peux insérer une image ou une illustration SVG */}
-        <img src='https://i.ibb.co/hRQ9fVbf/dashboard-illustration.png'/>
+        <img
+          src="https://i.ibb.co/hRQ9fVbf/dashboard-illustration.png"
+          alt="Tableau de bord illustration"
+          loading="lazy"
+        />
       </div>
     </section>
   );

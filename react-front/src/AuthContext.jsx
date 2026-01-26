@@ -8,20 +8,23 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const token = localStorage.getItem('access_token');
-
     if (token) {
       const payload = JSON.parse(atob(token.split('.')[1]));
+      const exp = payload.exp * 1000; // Convertir en millisecondes
+      const now = Date.now();
 
-      setUser({
-        id: payload.id,
-        username: payload.sub,
-        role: payload.role,
-        token
-      });
+      if (exp < now) {
+        // Déconnecte l'utilisateur si le token est expired
+        localStorage.removeItem('access_token');
+        setUser(null);
+      } else {
+        // Token valide
+        setUser({ id: payload.id, username: payload.sub, role: payload.role, token });
+      }
     }
-
     setLoading(false);
   }, []);
+
 
   const login = (token) => {
     localStorage.setItem('access_token', token);

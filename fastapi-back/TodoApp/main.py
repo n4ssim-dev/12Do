@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .models import Base
 from .database import engine
-from .routers import auth, todos, admin, users
+from .routers import auth, todos, admin, users, agenda
 
 app = FastAPI()
 
@@ -19,5 +19,6 @@ Base.metadata.create_all(bind=engine)
 
 app.include_router(auth.router)
 app.include_router(todos.router)
+app.include_router(agenda.router)
 app.include_router(admin.router)
 app.include_router(users.router)

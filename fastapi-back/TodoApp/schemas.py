@@ -25,7 +25,6 @@ class TodoResponse(BaseModel):
         from_attributes = True
 
 
-
 class Token(BaseModel):
     access_token: str
     token_type: str
@@ -59,3 +58,33 @@ class CreateUserRequest(BaseModel):
     password: str
     role: str
     phone_number: str
+
+class AgendaEventRequest(BaseModel):
+    todo_id: int = Field(gt=0)
+    start_date: datetime
+    end_date: datetime
+    all_day: bool = False
+
+    color: Optional[str] = None
+    notes: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+class AgendaEventResponse(BaseModel):
+    id: int
+    todo_id: int
+    title: str
+
+    start_date: datetime
+    end_date: datetime
+    all_day: bool
+
+    color: Optional[str]
+    notes: Optional[str]
+
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        from_attributes = True

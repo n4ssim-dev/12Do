@@ -37,9 +37,13 @@ const Header = () => {
           <li><a href="#features">Fonctionnalités</a></li>
           <li><a href="#pricing">Tarifs</a></li>
           
-          {/* Lien Dashboard visible uniquement si connecté */}
+          {/* Liens visible uniquement si connecté */}
           {user && (
             <li><Link to="/dashboard">Tableau de bord</Link></li>
+          )}
+
+          {user && (
+            <li><Link to="/agenda">Agenda</Link></li>
           )}
         </ul>
 
