@@ -7,35 +7,22 @@ const Footer = () => {
       <div className="footer-container">
         <div className="footer-brand">
           <div className="logo">
-            <div className="logo-icon"></div>
-            <span>Pulse</span>
+            <div>
+              <img 
+                className="logo-icon" 
+                src='https://i.ibb.co/RGBN1p5R/Gemini-Generated-Image-lfu970lfu970lfu9.png' 
+                alt="Logo"
+              />
+            </div>
+            <span>12Do</span>
           </div>
-          <p>La plateforme nouvelle génération pour les créatifs audacieux.</p>
+          <p>La gestion de tâches simplifié.</p>
         </div>
 
-        <div className="footer-grid">
-          <div className="footer-column">
-            <h4>Produit</h4>
-            <a href="#">Télécharger</a>
-            <a href="#">Documentation</a>
-            <a href="#">Mises à jour</a>
-          </div>
-          <div className="footer-column">
-            <h4>Société</h4>
-            <a href="#">Carrières</a>
-            <a href="#">Blog</a>
-            <a href="#">Contact</a>
-          </div>
-          <div className="footer-column">
-            <h4>Légal</h4>
-            <a href="#">Confidentialité</a>
-            <a href="#">CGU</a>
-          </div>
-        </div>
       </div>
       
       <div className="footer-bottom">
-        <p>&copy; 2024 Pulse Inc. Tous droits réservés.</p>
+        <p>&copy; 2026 12Do. Tous droits réservés.</p>
       </div>
     </footer>
   );

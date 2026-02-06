@@ -83,3 +83,82 @@ $radius: 16px;
     a { color: $primary; font-weight: 600; text-decoration: none; margin-left: 5px; }
   }
 }
+
+// Ajoutez ceci dans .auth-container
+
+.oauth-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 0.5rem 0;
+  color: $text-muted;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+
+  &::before, &::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  span {
+    padding: 0 12px;
+  }
+}
+
+.oauth-section {
+  display: flex;
+  justify-content: center;
+  
+  .btn-google {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    padding: 0.75rem;
+    background: white;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    color: $text-main;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    .google-icon {
+      width: 20px;
+      height: 20px;
+    }
+
+    &:hover {
+      background-color: #f8fafc;
+      border-color: #cbd5e1;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+}
+
+.auth-footer {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #f1f5f9;
+  text-align: center;
+  
+  p {
+    font-size: 0.9rem;
+    color: $text-muted;
+    
+    a {
+      color: $primary;
+      font-weight: 700;
+      text-decoration: none;
+      &:hover { text-decoration: underline; }
+    }
+  }
+}

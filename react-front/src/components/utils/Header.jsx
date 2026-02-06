@@ -33,10 +33,6 @@ const Header = () => {
         </Link>
         
         <ul className="nav-links">
-          {/* Liens visibles par tout le monde */}
-          <li><a href="#features">Fonctionnalités</a></li>
-          <li><a href="#pricing">Tarifs</a></li>
-          
           {/* Liens visible uniquement si connecté */}
           {user && (
             <li><Link to="/dashboard">Tableau de bord</Link></li>
@@ -60,7 +56,7 @@ const Header = () => {
             /* État : DÉCONNECTÉ */
             <>
               <Link to="/login" className="btn-login">Connexion</Link>
-              <Link to="/register" className="btn-signup">Essai gratuit</Link>
+              <Link to="/register" className="btn-signup">Inscription</Link>
             </>
           )}
         </div>

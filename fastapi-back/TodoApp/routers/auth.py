@@ -1,4 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi.responses import RedirectResponse
+import requests
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 from sqlalchemy.util import deprecated
@@ -26,6 +28,9 @@ router = APIRouter(
 
 SECRET_KEY = os.getenv('SECRET_KEY')
 ALGORITHM = os.getenv('ALGORITHM')
+GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
+GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
+GOOGLE_REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI")
 
 bcrypt_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 oauth2_bearer = OAuth2PasswordBearer(tokenUrl='auth/token')
@@ -98,3 +103,77 @@ async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm,
     token = create_access_token(user.username,user.role,user.id,timedelta(days=1))
 
     return {'access_token': token, 'token_type': 'bearer'}
+
+####-------------------- GOOGLE OAUTH ---------------------####
+
+@router.get("/google/login")
+async def google_login():
+    google_auth_url = (
+        "https://accounts.google.com/o/oauth2/v2/auth"
+        "?response_type=code"
+        f"&client_id={GOOGLE_CLIENT_ID}"
+        f"&redirect_uri={GOOGLE_REDIRECT_URI}"
+        "&scope=openid%20email%20profile"
+    )
+    return RedirectResponse(google_auth_url)
+
+@router.get("/google/callback")
+async def google_callback(request: Request, db: db_dependency):
+    code = request.query_params.get("code")
+
+    if not code:
+        raise HTTPException(status_code=400, detail="Code Google manquant")
+
+    # 1. Échange code → token
+    token_res = requests.post(
+        "https://oauth2.googleapis.com/token",
+        data={
+            "client_id": GOOGLE_CLIENT_ID,
+            "client_secret": GOOGLE_CLIENT_SECRET,
+            "code": code,
+            "grant_type": "authorization_code",
+            "redirect_uri": GOOGLE_REDIRECT_URI,
+        },
+    )
+
+    token_data = token_res.json()
+    access_token = token_data.get("access_token")
+
+    # 2. Infos utilisateur Google
+    user_res = requests.get(
+        "https://www.googleapis.com/oauth2/v2/userinfo",
+        headers={"Authorization": f"Bearer {access_token}"}
+    )
+
+    google_user = user_res.json()
+    email = google_user["email"]
+
+    # 3. Création / récupération user
+    user = db.query(Users).filter(Users.email == email).first()
+
+    if not user:
+        user = Users(
+            email=email,
+            username=email,
+            first_name=google_user.get("given_name", ""),
+            last_name=google_user.get("family_name", ""),
+            role="user",
+            hashed_password=bcrypt_context.hash(os.urandom(16).hex()),
+            is_active=True
+        )
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+
+    # 4. Génération JWT interne
+    jwt_token = create_access_token(
+        user.username,
+        user.role,
+        user.id,
+        timedelta(days=1)
+    )
+
+    # 5. Redirection vers le front avec token
+    return RedirectResponse(
+        f"http://localhost:3000/oauth-success?token={jwt_token}"
+    )

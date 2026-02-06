@@ -1,4 +1,5 @@
 import React from 'react';
+import {Link} from 'react-router-dom'
 import './HomeHero.scss';
 
 const Hero = () => {
@@ -12,12 +13,12 @@ const Hero = () => {
           12Do vous offre une solution de gestion de tâches dans le temps à l'aide d'un tableau de bord et d'un agenda intelligent.
         </p>
         <div className="hero-cta">
-          <a href="/register" className="btn-primary-hero">
+          <Link href="/register" className="btn-primary-hero">
             Créer un compte gratuit
-          </a>
-          <a href="#features" className="btn-secondary-hero">
-            En savoir plus
-          </a>
+          </Link>
+          <Link href="/login" className="btn-secondary-hero">
+            Se connecter
+          </Link>
         </div>
         <p className="hero-small-text">
           Aucune carte de crédit requise. Annulez à tout moment.

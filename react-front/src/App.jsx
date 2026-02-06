@@ -13,6 +13,7 @@ import Error from "./pages/error/NotFound.jsx"
 import Dashboard from "./pages/dashboard/Dashboard.jsx"
 import AgendaPage from "./pages/agenda/Agenda.jsx";
 
+import OAuthSuccess from "./OAuthSuccess.jsx";
 import ProtectedRoute from "./ProtectedRoute.jsx"
 import { AuthProvider } from "./AuthContext.jsx";
 
@@ -35,6 +36,7 @@ export default function App() {
         <Route path="/about" element={<About />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/oauth-success" element={<OAuthSuccess />} />
         <Route path="*" element={<Error />} />
         <Route
           path="/dashboard"

@@ -83,3 +83,49 @@ $radius: 16px;
     a { color: $primary; font-weight: 600; text-decoration: none; margin-left: 5px; }
   }
 }
+
+// Séparateur "OU"
+  .auth-divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 1.5rem 0;
+    color: $text-muted;
+    font-size: 0.85rem;
+
+    &::before, &::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    &::before { margin-right: 1rem; }
+    &::after { margin-left: 1rem; }
+  }
+
+  // Bouton Social (Google)
+  .btn-google {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 0.75rem;
+    background: white;
+    color: $text-main;
+    padding: 0.8rem;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    svg {
+      width: 20px;  // Force la taille du SVG trop gros
+      height: 20px;
+      display: block;
+    }
+
+    &:hover {
+      background-color: #f1f5f9;
+      border-color: #cbd5e1;
+    }
+  }
